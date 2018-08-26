@@ -115,7 +115,7 @@ namespace SudokuSolver
                 }
             }
 
-            solver(unsolvedCells, 0);
+            solver(unsolvedCells);
         }
 
 
@@ -136,45 +136,48 @@ namespace SudokuSolver
         #endregion
 
 
-        private void solver(List<Cell> unsolved, int index)
+        private void solver(List<Cell> unsolved)
         {
-            if (index >= unsolved.Count || index < 0)
+            int index = 0;
+
+            while (true)
             {
-                return;
-            }
+                if (index >= unsolved.Count || index < 0)
+                {
+                    return;
+                }
 
-            Cell currCell = unsolved[index];
-            int x = currCell.x;
-            int y = currCell.y;
+                Cell currCell = unsolved[index];
+                int x = currCell.x;
+                int y = currCell.y;
 
-            if (currCell.value > 9)
-            {
-                // All values have been exhausted. Backtrack to previous cell.
-                // Reset this cells value for next iteration.
-                currCell.value = 0;
-                grid[x, y] = 0;
+                if (currCell.value > 9)
+                {
+                    // All values have been exhausted. Backtrack to previous cell.
+                    // Reset this cells value for next iteration.
+                    currCell.value = 0;
+                    grid[x, y] = 0;
 
-                setCellAttributes(x, y, Color.Yellow, "");
+                    setCellAttributes(x, y, Color.Yellow, "");
 
-                solver(unsolved, --index);
-            }
-            else if (isValid(currCell))
-            {
-                // Found a valid solution for this cell. Move to next unsolved cell.
-                grid[x, y] = currCell.value;
+                    index--;
+                }
+                else if (isValid(currCell))
+                {
+                    // Found a valid solution for this cell. Move to next unsolved cell.
+                    grid[x, y] = currCell.value;
 
-                setCellAttributes(x, y, Color.LimeGreen, currCell.value.ToString());
+                    setCellAttributes(x, y, Color.LimeGreen, currCell.value.ToString());
 
-                solver(unsolved, ++index);
-            } 
-            else
-            {
-                // Current value is invalid. Try next value for this cell.
-                currCell.value++;
+                    index++;
+                }
+                else
+                {
+                    // Current value is invalid. Try next value for this cell.
+                    currCell.value++;
 
-                setCellAttributes(x, y, Color.Red, currCell.value.ToString());
-
-                solver(unsolved, index);
+                    setCellAttributes(x, y, Color.Red, currCell.value.ToString());
+                }
             }
         }
 
